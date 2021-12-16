@@ -1,4 +1,88 @@
-﻿<#
+
+<#PSScriptInfo
+
+.VERSION 5.4.2
+
+.GUID f201f241-04ae-409a-9038-e44b51cd5769
+
+.AUTHOR Jeff Carreon (twiiter: @jeffctangsoo10) or (email: jeffcntgod@gmail.com)
+
+.COMPANYNAME Keep Calm Carre-on!
+
+.COPYRIGHT 2021 Keep Calm Carre-on!. All rights reserved.
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+	$DeclineLastLevelOnly & $trial CANNOT be used at the same time.
+	Script will create custom application "CMSDKPosh" Eventlog for storing events below
+		EventID 21020 = Successful Run
+		EventID 21021 = Error running the main function
+		EventID 21031 = Error running either the Decline superseded or itanium function
+
+
+	Version:	5.4.2
+	Author:		Jeff Carreon
+
+    Updates: ver. 5.4.2  (12/15/2021)
+        - Added a function to decline Windows 10 Feature Updates for Enablement package
+        - Added -forcesync.  For forcing SUP synchronization from Top down on CM Hierarchies
+        - Fixed the CleanUpdateList function
+        
+    Updates: ver. 5.4.1  (3/9/2021)
+        - Updated the report to not show categories with 0 results.  Though it will list the ones with 0 below the table.
+
+	Updates: ver. 5.4  (3/2/2021)
+		- Added an OneOff Manual Decline function.  For declining single patches or multiple depending on the -kb input (below)
+        - example usage:  .\Run-DeclineUpdate-Cleanup.ps1 -trialrun -OneOffCleanup -kb "*KB2768005*"
+        NOTEs: 
+            - The -OneOffCleanup depends on -kb being populated
+            - The -kb uses the "like" operator. 
+            - I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
+
+	Updates: ver. 5.3  (12/9/2020)
+		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004  
+        - Added a function for declining legacy Office and M365
+
+    Updates: ver. 5.2  (10/14/2020)
+        - Added the following, but only -CleanupObsoleteComputers is being used.
+        	Invoke-WsusServerCleanup -CompressUpdates
+	        Invoke-WsusServerCleanup -CleanupObsoleteComputers
+	        Invoke-WsusServerCleanup -CleanupUnneededContentFiles
+	
+	Updates: ver. 5.1 (8/7/2018)
+		- Fixed the missing comma in one of the paramaters (Thanks Johan for pointing that out!)
+        - Improved/Updates OS filtering, to only allow decline of targetted OS/Updates.
+        - Added Decline updates for Windows 7, Windows 8, Windows 8.1, Windows Server 2003, Windows Server 08, Windows Server 08 R2, Windows Server 12, and Windows Server 12 R2.  
+		NOTE: All are SKIPPED by default. Modify the corresponding skip statement in the parameter secion below accordingly and remove the $true, if you would like to decline any of these.
+
+	Updates 5/10/2018: 
+		- Added Decline updates for ARM64-Based, and IE 10
+        - Added Clean Update List maintnance function (optional), deletes files/folders that are # of days old.
+		- Fixed error handling on querying for updates.
+		- Perfomance improvement
+
+	Updates 4/25/2018: 
+		- Added Decline updates for Win10 Next, and Server Next
+        - Added email reporting and logging
+		- Perfomance improvement on querying updates
+
+#>
+
+<# 
 .SYNOPSIS
 	Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE9, IE10, Win10 Next, Server Next, Embedded, Legacy Win10, Unwanted M365 updates, and various Legacy Windows OS (See below) Updates in WSUS/SUP environment.
 	    Windows 7, Windows 8, Windows 8.1, Windows Server 2003, Windows Server 08, Windows Server 08 R2, Windows Server 12, and Windows Server 12 R2.
@@ -11,11 +95,11 @@
 		The OS filtering function may grab Other articles. I HIGHLY recommend doing a -TrialRun first, and examine the results in the 'UpdatesList' folder before executing this in prod environment.  
 			To do this, either run the script with -TrialRun or set this switch to $true (which is on by default), see param section below.  
 			AND remove the = $true off the OS/products' switches below if you'd like to see list of the updates that you'd like to decline first, before setting the -TrialRun to false.
-	
 
-.DESCRIPTION
-	Script is designed to decline all of the updates that have been superseded for over 90 days, by default.  This can be adjusted in param section.
-	
+.DESCRIPTION 
+ Script is designed to decline all of the updates that have been superseded for over 90 days (by default), and MORE!!!. 
+
+
 	# $Servers					= Specify the target servers as default target(s) for automation.  Or, can be specified manually at run time.
 	# $UseSSL                   = Specify whether WSUS Server is configured to use SSL
 	# $Port                     = Specify WSUS Server Port (Hard coded in param section, though this can be specified otherwise)
@@ -61,6 +145,12 @@
                                     - Current Criteria
                                     ($_.Title -match "Office 365" -and $_.Title -match "x86 based Edition") -or 
                                     ($_.Title -match "Microsoft 365 Apps Update" -and $_.Title -match "x86 based Edition")
+    
+    # $SkipWin10FeatureUpdates  = Specify this or set to true, to skip declining unwanted Windows 10 Feature Updates / Enablement Packages
+    
+                                    -Current Criteria
+                                    ($_.UpdateClassificationTitle -eq "Upgrades") -and !(($_.Title -match "x64-based") -and ($_.Title -match "Enablement Package"))
+
 
     # $CompressUpdates			= If true, this runs Invoke-WsusServerCleanup -CompressUpdates.  Default is false
 
@@ -75,83 +165,23 @@
 	# $CleanULNumber			= Specify the number of days old folders/files to keep in UpdateList folder
 
 	# $forcesync			= Specify whether SUP sync should be run, after all servers have done declines.  Default is $false
-
-
-.NOTE
-
-	$DeclineLastLevelOnly & $trial CANNOT be used at the same time.
-	Script will create custom application "CMSDKPosh" Eventlog for storing events below
-		EventID 21020 = Successful Run
-		EventID 21021 = Error running the main function
-		EventID 21031 = Error running either the Decline superseded or itanium function
-
-
-	Version:	5.4.2
-	Author:		Jeff Carreon
-
-    Update 12/10/2021
-        - Added a function to decline Windows 10 Feature Updates for Enablement package
-        - Fixed the CleanUpdateList function
-
-    Update 3/9/2021
-        - Updated the report to not show categories with 0 results.  Though it will list the ones with 0 below the table.
-
-	Update 3/2/2021
-		- Added an OneOff Manual Decline function.  For declining single patches or multiple depending on the -kb input (below)
-        - example usage:  .\Run-DeclineUpdate-Cleanup.ps1 -trialrun -OneOffCleanup -kb "*KB2768005*"
-        NOTEs: 
-            - The -OneOffCleanup depends on -kb being populated
-            - The -kb uses the "like" operator. 
-            - I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
-
-	Update 12/9/2020
-		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004  
-        - Added a function for declining legacy Office and M365
-
-    Updates 10/14/2020
-        - Added the following, but only -CleanupObsoleteComputers is being used.
-        	Invoke-WsusServerCleanup -CompressUpdates
-	        Invoke-WsusServerCleanup -CleanupObsoleteComputers
-	        Invoke-WsusServerCleanup -CleanupUnneededContentFiles
-	
-	Updates 8/7/2018: 
-		- Fixed the missing comma in one of the paramaters (Thanks Johan for pointing that out!)
-        - Improved/Updates OS filtering, to only allow decline of targetted OS/Updates.
-        - Added Decline updates for Windows 7, Windows 8, Windows 8.1, Windows Server 2003, Windows Server 08, Windows Server 08 R2, Windows Server 12, and Windows Server 12 R2.  
-		NOTE: All are SKIPPED by default. Modify the corresponding skip statement in the parameter secion below accordingly and remove the $true, if you would like to decline any of these.
-
-	Updates 5/10/2018: 
-		- Added Decline updates for ARM64-Based, and IE 10
-        - Added Clean Update List maintnance function (optional), deletes files/folders that are # of days old.
-		- Fixed error handling on querying for updates.
-		- Perfomance improvement
-
-	Updates 4/25/2018: 
-		- Added Decline updates for Win10 Next, and Server Next
-        - Added email reporting and logging
-		- Perfomance improvement on querying updates
-
-
-
-#>
+#> 
 
 [CmdletBinding()]
 Param(
 	
     # Define lower tier SUP servers first, then TOP WSUS/SUP server last in this array
-    #$Servers = @("server1.domain.com","server2.domain.com","server3.domain.com","TopSup.domain.com"),	
-    #$Servers = @("server1.domain.dom"),
-    $Servers = @("CMTSUP"),		
+    $Servers = @("server1.domain.com","server2.domain.com","server3.domain.com","TopSup.domain.com"),	
 
-	[bool]$UseSSL = $false,
+	[bool]$UseSSL = $true,
 	
-	[int]$PortNumber = 8530,
+	[int]$PortNumber = 8531,
 	
     [switch] $TrialRun,
 
-    [string] $CMprovider = "CMPV",
+    [string] $CMprovider = "CMPROVIDER-server",
 
-    [string] $SiteCode = "CAS",
+    [string] $SiteCode = "SiteCode",
 	
     [switch] $DeclineLastLevelOnly,
 	
@@ -214,7 +244,7 @@ Param(
 
 	[string] $kb,
 
-    [switch] $forcesync,
+    [switch] $forcesync = $true,
 
 	[bool]$EmailReport = $false,
 	
@@ -222,9 +252,7 @@ Param(
 	
 	[string]$From = "yourteam@mail.com",
 	
-	#[string[]]$To = "dud1@mail.com,dude2@mail.com,dude3@mail.com",
-	
-	[string[]]$To = "dud1@mail.com",
+	[string[]]$To = "dude1@mail.com,dude2@mail.com,dude3@mail.com",
 	
 	[string]$Subject = "WSUS/SUP Decline Updates Report",
 
@@ -238,6 +266,7 @@ Param(
 
 )
 
+$error.Clear()
 $SinglePatch = $kb
 $script:zerovals = New-Object System.Collections.ArrayList
 $ScriptVersion = "5.4.2"
@@ -1605,6 +1634,7 @@ Function WSUSCleanup-CompressUpdates{
         if($OneOffCleanup){
             Write-ToLog "OneOffCleanup is set to $OneOffCleanup. Not running CleanupCompressUpdates Function."
             $script:Compupdates = "Skipped"
+            Write-ToLog "--"
         }
         else{
             if($CompressUpdates)
@@ -1624,10 +1654,12 @@ Function WSUSCleanup-CompressUpdates{
                 {Write-EventLog -LogName $Eventlog -EventID 21021 -Message "Unable to run CompressUpdates $script:WsusServer" -Source $EventSource -EntryType Error; SendMail{}}
 
                 Write-ToLog "Invoke-WsusServerCleanup -CompressUpdates Result: $script:Compupdates"
+                Write-ToLog "--"
             }else
             {
                 $script:Compupdates = "Skipped"
                 Write-ToLog "Invoke-WsusServerCleanup -CompressUpdates Function is $script:Compupdates. Not running it."
+                Write-ToLog "--"
             }
         }
     }
@@ -1651,6 +1683,7 @@ Function WSUSCleanup-CleanupObsComputers{
         if($OneOffCleanup){
             Write-ToLog "OneOffCleanup is set to $OneOffCleanup. Not running CleanupObsoleteComputers Function."
             $script:CleanObsComp = "Skipped"
+            Write-ToLog "--"
         }
         else{
             if($CleanupObsoleteComputers){
@@ -1666,11 +1699,13 @@ Function WSUSCleanup-CleanupObsComputers{
                 $script:CleanObsComp = $CleanObsComptmp.Trim("Obsolete Computers Deleted:")
 
                 Write-ToLog "Invoke-WsusServerCleanup -CleanupObsoleteComputers Result: $script:CleanObsComp"
+                Write-ToLog "--"
 
             }else
             {
                 $script:CleanObsComp = "Skipped"
                 Write-ToLog "Invoke-WsusServerCleanup -CleanupObsoleteComputers Function is $script:CleanObsComp. Not running it."
+                Write-ToLog "--"
             }
         }
 
@@ -1695,6 +1730,7 @@ Function WSUSCleanup-UneededContentFiles{
         if($OneOffCleanup){
             Write-ToLog "OneOffCleanup is set to $OneOffCleanup. Not running CleanupUnneededContentFiles Function."
             $script:CleanContents = "Skipped"
+            Write-ToLog "--"
         }
         Else{
 
@@ -1712,11 +1748,13 @@ Function WSUSCleanup-UneededContentFiles{
                 {Write-EventLog -LogName $Eventlog -EventID 21021 -Message "Unable to run CleanupUnneededContentFiles $script:WsusServer" -Source $EventSource -EntryType Error; SendMail{}}
 
                 Write-ToLog "Invoke-WsusServerCleanup -CleanupUnneededContentFiles Result: $script:CleanContents"
+                Write-ToLog "--"
 
             }else
             {
                 $script:CleanContents = "Skipped"
                 Write-ToLog "Invoke-WsusServerCleanup -CleanupUnneededContentFile Function is $script:CleanContents. Not running it."
+                Write-ToLog "--"
             }
         }
 
@@ -2200,7 +2238,7 @@ $jeffobjects = Foreach ($script:WsusServer in $servers)
 	    Else
 	    { 
 		    Write-ToLog "SkipWin10FeatureUpdates is set to $SkipWin10FeatureUpdates.  Skipping Decline-LegacyOff365 Function."
-		    $LGOff365 = "Skipped"
+		    $Win10FUP = "Skipped"
 		    $Props."Win10 Feat Up" = ([string]$Win10FUP)
         }
 
@@ -2338,34 +2376,50 @@ if($OneOffCleanup){
 
 }
 
-
+  
 if($scount -eq $xcounter)
 {
-    if(!$Trialrun)
+
+    if($error)
     {
-        if($forcesync)
-            {
-                Write-ToLog "Force Synch is set to $forcesync. Forcing a SUP sync."
-                $SUP = [wmiclass]("\\$CMProvider\root\SMS\Site_$($SiteCode):SMS_SoftwareUpdate")
-                $Params = $SUP.GetMethodParameters("SyncNow")
-                $Params.fullSync = $true
-                $Return = $SUP.SyncNow($Params)
+          Write-ToLog "There are errors. Not forcing a SUP sync. Please check the logs."
+          Write-ToLog "Error: $error[0]."
+    }
+    else
+    {
+        if(!$Trialrun)
+        {
+            if($forcesync)
+                {
+                    Write-ToLog "Force Synch is set to $forcesync. Forcing a SUP sync."
+                    $SUP = [wmiclass]("\\$CMProvider\root\SMS\Site_$($SiteCode):SMS_SoftwareUpdate")
+                    $Params = $SUP.GetMethodParameters("SyncNow")
+                    $Params.fullSync = $true
+                    $Return = $SUP.SyncNow($Params)
         
-            }
-        Else
+                }
+            Else
             {
                 Write-ToLog "Force Synch is set to $forcesync. Not forcing a SUP sync."
             }
         }
         else
         {
-        Write-ToLog "Trialrun is set to $Trialrun. Not forcing a SUP sync."
-        }        
-}
+            Write-ToLog "Trialrun is set to $Trialrun. Not forcing a SUP sync."
+        }  
+
+    }
 	
+
+}
+
+
 Write-ToLog "====>  Done  <===="
 Write-ToLog "Script: $scriptName #######"
 Write-ToLog "Ver: $ScriptVersion"
 Write-ToLog "All target WSUS/SUP servers have been completed."
 Write-ToLog "See $Overallhtmfile."
 Write-ToLog "=========================================="
+
+
+
