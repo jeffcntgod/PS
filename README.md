@@ -16,9 +16,10 @@ Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE
     Latest Updates from previous release (5.0)****
 	Version:	5.4.3
 	Author:		Jeff Carreon
-    	NEW! Updates: ver. 5.4.3  (12/17/2021)
+	
+	NEW! Updates: ver. 5.4.3  (12/17/2021)
         - Added Metadatasize comparison report (Requires Importing SQLPS or SQLServer Module)
-    	NEW! Updates: ver. 5.4.2  (12/15/2021)
+	NEW! Updates: ver. 5.4.2  (12/15/2021)
         - Added a function to decline Windows 10 Feature Updates for Enablement package
         - Added -forcesync.  For forcing SUP synchronization from Top down on CM Hierarchies
         - Fixed the CleanUpdateList function
@@ -31,7 +32,7 @@ Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE
             - The -OneOffCleanup depends on -kb being populated
             - The -kb uses the "like" operator. 
             - I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
-	  NEW! Updates: ver. 5.3  (12/9/2020)
+	NEW! Updates: ver. 5.3  (12/9/2020)
 		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004Â Â 
         - Added a function for declining legacy Office and M365
     	NEW! Updates: ver. 5.2  (10/14/2020)
