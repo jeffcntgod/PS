@@ -170,25 +170,25 @@
 [CmdletBinding()]
 Param(
 	
-    # Define lower tier SUP servers first, then TOP WSUS/SUP server last in this array
-    $Servers = @("server1.domain.com","server2.domain.com","server3.domain.com","TopSup.domain.com"),	
+	# Define lower tier SUP servers first, then TOP WSUS/SUP server last in this array
+	$Servers = @("server1.domain.com","server2.domain.com","server3.domain.com","TopSup.domain.com"),	
 
 	[bool]$UseSSL = $true,
 	
 	[int]$PortNumber = 8531,
 	
-    [switch] $TrialRun,
+	[switch] $TrialRun,
 
-    [string] $CMprovider = "CMPROVIDER-server",
+	[string] $CMprovider = "CMPROVIDER-server",
 
-    [string] $SiteCode = "SiteCode",
+	[string] $SiteCode = "SiteCode",
 	
-    [switch] $DeclineLastLevelOnly,
+	[switch] $DeclineLastLevelOnly,
 	
-    [Parameter(Mandatory=$False)]
-    [int] $ExclusionPeriod = 90,
+	[Parameter(Mandatory=$False)]
+	[int] $ExclusionPeriod = 90,
 
-    [switch] $SkipItanium,
+	[switch] $SkipItanium,
 	
 	[switch] $SkipXP,
 	
@@ -228,15 +228,15 @@ Param(
 
 	[switch] $SkipArm64,
 
-    [switch] $SkipLegacyWin10,
+	[switch] $SkipLegacyWin10,
     
-    [switch] $SkipLegacyOff365,
+	[switch] $SkipLegacyOff365,
 
-    [switch] $SkipWin10FeatureUpdates,
+	[switch] $SkipWin10FeatureUpdates,
 
 	[switch] $CompressUpdates = $false,
 
-    [switch] $CleanupObsoleteComputers = $true,
+	[switch] $CleanupObsoleteComputers = $true,
 
 	[switch] $CleanupUnneededContentFiles = $false,
 	
@@ -244,7 +244,7 @@ Param(
 
 	[string] $kb,
 
-    [switch] $forcesync = $true,
+	[switch] $forcesync = $true,
 
 	[bool]$EmailReport = $false,
 	
@@ -256,7 +256,7 @@ Param(
 	
 	[string]$Subject = "WSUS/SUP Decline Updates Report",
 
-    [string]$ReportTitle = "WSUS/SUP Decline Updates Maintenance Task - TOP SUP",
+	[string]$ReportTitle = "WSUS/SUP Decline Updates Maintenance Task - TOP SUP",
 	
 	# UpdateList Folder maintenance
 	[switch] $CleanUpdatelist = $true,
@@ -2231,15 +2231,15 @@ $jeffobjects = Foreach ($script:WsusServer in $servers)
         If (!$SkipWin10FeatureUpdates)
 	    {	
 		    Try{
-			    Decline-Win10FeatureUpdates{};if($Script:FeaureWin10UpdatesCount -ne '0'){$Props."Win10 Feat Up" = ("$Script:LegacyOff365count")} else { $script:zerovals.Add('Win10 Feat Up') > $null }
+			    Decline-Win10FeatureUpdates{};if($Script:FeaureWin10UpdatesCount -ne '0'){$Props."Win10 Servicing Updates" = ("$Script:FeaureWin10UpdatesCount")} else { $script:zerovals.Add('Win10 Servicing Updates') > $null }
 		    }
 		    Catch{Write-EventLog -LogName $Eventlog -EventID 21021 -Message "Unable to run Decline-Win10FeatureUpdates function on $script:WsusServer" -Source $EventSource -EntryType Error; SendMail{}}
 	    }
 	    Else
 	    { 
-		    Write-ToLog "SkipWin10FeatureUpdates is set to $SkipWin10FeatureUpdates.  Skipping Decline-LegacyOff365 Function."
+		    Write-ToLog "SkipWin10FeatureUpdates is set to $SkipWin10FeatureUpdates.  Skipping  Decline-Win10FeatureUpdates Function."
 		    $Win10FUP = "Skipped"
-		    $Props."Win10 Feat Up" = ([string]$Win10FUP)
+		    $Props."Win10 Servicing Updates" = ([string]$Win10FUP)
         }
 
     }
