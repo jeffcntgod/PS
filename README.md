@@ -12,20 +12,17 @@ Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE
 			To do this, either run the script with -TrialRun or set this switch to $true (which is on by default), see param section below.  
 			AND remove the = $true off the OS/products' switches below if you'd like to see list of the updates that you'd like to decline first, before setting the -TrialRun to false.
 
-.DESCRIPTION 
- Script is designed to decline all of the updates that have been superseded for over 90 days (by default), and MORE!!!. 
-
-Latest Updates from previous release (5.0)****
+        
+    Latest Updates from previous release (5.0)****
 	Version:	5.4.3
 	Author:		Jeff Carreon
-    NEW! Updates: ver. 5.4.3  (12/17/2021)
+    	NEW! Updates: ver. 5.4.3  (12/17/2021)
         - Added Metadatasize comparison report (Requires Importing SQLPS or SQLServer Module)
-    NEW! Updates: ver. 5.4.2  (12/15/2021)
+    	NEW! Updates: ver. 5.4.2  (12/15/2021)
         - Added a function to decline Windows 10 Feature Updates for Enablement package
         - Added -forcesync.  For forcing SUP synchronization from Top down on CM Hierarchies
         - Fixed the CleanUpdateList function
-        
-    NEW! Updates: ver. 5.4.1  (3/9/2021)
+	NEW! Updates: ver. 5.4.1  (3/9/2021)
         - Updated the report to not show categories with 0 results.  Though it will list the ones with 0 below the table.
 	  NEW! Updates: ver. 5.4  (3/2/2021)
 		- Added an OneOff Manual Decline function.  For declining single patches or multiple depending on the -kb input (below)
@@ -37,7 +34,7 @@ Latest Updates from previous release (5.0)****
 	  NEW! Updates: ver. 5.3  (12/9/2020)
 		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004Â Â 
         - Added a function for declining legacy Office and M365
-    NEW! Updates: ver. 5.2  (10/14/2020)
+    	NEW! Updates: ver. 5.2  (10/14/2020)
         - Added the following, but only -CleanupObsoleteComputers is being used.
         	Invoke-WsusServerCleanup -CompressUpdates
 	        Invoke-WsusServerCleanup -CleanupObsoleteComputers
