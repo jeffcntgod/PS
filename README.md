@@ -1,6 +1,6 @@
 # PS
 .SYNOPSIS
-Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE9, IE10, Win10 Next, Server Next, Embedded, Legacy Win10, Unwanted M365 updates, and various Legacy Windows OS (See below) Updates in WSUS/SUP environment, and MORE!!!
+WSUS Decline Script (version 5.4.3) is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE9, IE10, Win10 Next, Server Next, Embedded, Legacy Win10, Unwanted M365 updates, and various Legacy Windows OS (See below) Updates in WSUS/SUP environment, and MORE!!!
 
 
     It can also now target and decline individual patches, decline Win10 servicing updates, and compare metadata before and after...
