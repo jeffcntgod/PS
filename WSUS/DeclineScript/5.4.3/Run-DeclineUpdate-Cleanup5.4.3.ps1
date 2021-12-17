@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 5.4.2
+.VERSION 5.4.3
 
 .GUID f201f241-04ae-409a-9038-e44b51cd5769
 
@@ -26,20 +26,15 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-	$DeclineLastLevelOnly & $trial CANNOT be used at the same time.
+$DeclineLastLevelOnly & $trial CANNOT be used at the same time.
 	Script will create custom application "CMSDKPosh" Eventlog for storing events below
 		EventID 21020 = Successful Run
 		EventID 21021 = Error running the main function
 		EventID 21031 = Error running either the Decline superseded or itanium function
-
-
 	Version:	5.4.3
 	Author:		Jeff Carreon
-
     Updates: ver. 5.4.3  (12/17/2021)
         - Added Metadatasize comparison report (Requires Importing SQLPS or SQLServer Module)
-
     Updates: ver. 5.4.2  (12/15/2021)
         - Added a function to decline Windows 10 Feature Updates for Enablement package
         - Added -forcesync.  For forcing SUP synchronization from Top down on CM Hierarchies
@@ -47,7 +42,6 @@
         
     Updates: ver. 5.4.1  (3/9/2021)
         - Updated the report to not show categories with 0 results.  Though it will list the ones with 0 below the table.
-
 	Updates: ver. 5.4  (3/2/2021)
 		- Added an OneOff Manual Decline function.  For declining single patches or multiple depending on the -kb input (below)
         - example usage:  .\Run-DeclineUpdate-Cleanup.ps1 -trialrun -OneOffCleanup -kb "*KB2768005*"
@@ -55,11 +49,9 @@
             - The -OneOffCleanup depends on -kb being populated
             - The -kb uses the "like" operator. 
             - I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
-
 	Updates: ver. 5.3  (12/9/2020)
 		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004  
         - Added a function for declining legacy Office and M365
-
     Updates: ver. 5.2  (10/14/2020)
         - Added the following, but only -CleanupObsoleteComputers is being used.
         	Invoke-WsusServerCleanup -CompressUpdates
@@ -71,19 +63,19 @@
         - Improved/Updates OS filtering, to only allow decline of targetted OS/Updates.
         - Added Decline updates for Windows 7, Windows 8, Windows 8.1, Windows Server 2003, Windows Server 08, Windows Server 08 R2, Windows Server 12, and Windows Server 12 R2.  
 		NOTE: All are SKIPPED by default. Modify the corresponding skip statement in the parameter secion below accordingly and remove the $true, if you would like to decline any of these.
-
 	Updates 5/10/2018: 
 		- Added Decline updates for ARM64-Based, and IE 10
         - Added Clean Update List maintnance function (optional), deletes files/folders that are # of days old.
 		- Fixed error handling on querying for updates.
 		- Perfomance improvement
-
 	Updates 4/25/2018: 
 		- Added Decline updates for Win10 Next, and Server Next
         - Added email reporting and logging
 		- Perfomance improvement on querying updates
 
-#>
+#> 
+
+
 
 <# 
 .SYNOPSIS
