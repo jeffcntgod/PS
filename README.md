@@ -25,13 +25,13 @@ Script is for declining superseeded, Itanium, Preview, Beta, ARM64, IE7, IE8, IE
         - Fixed the CleanUpdateList function
 	NEW! Updates: ver. 5.4.1  (3/9/2021)
         - Updated the report to not show categories with 0 results.  Though it will list the ones with 0 below the table.
-	  NEW! Updates: ver. 5.4  (3/2/2021)
+	NEW! Updates: ver. 5.4  (3/2/2021)
 		- Added an OneOff Manual Decline function.  For declining single patches or multiple depending on the -kb input (below)
         - example usage:  .\Run-DeclineUpdate-Cleanup.ps1 -trialrun -OneOffCleanup -kb "*KB2768005*"
-        NOTEs: 
-            - The -OneOffCleanup depends on -kb being populated
-            - The -kb uses the "like" operator. 
-            - I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
+   		NOTEs: 
+            	- The -OneOffCleanup depends on -kb being populated
+            	- The -kb uses the "like" operator. 
+            	- I strongly recommened using the -Trialrun first, then validate the list of patches that are documented in the logs and html it creates before declining.
 	NEW! Updates: ver. 5.3  (12/9/2020)
 		- Added a function for Windows 10 versions 1507/1511/1607/1703/1803/1903/2004Â Â 
         - Added a function for declining legacy Office and M365
