@@ -108,5 +108,6 @@ Latest Updates from previous release (5.0)****
 	# $CleanULNumber			= Specify the number of days old folders/files to keep in UpdateList folder
 
 	# $forcesync			= Specify whether SUP sync should be run, after all servers have done declines.  Default is $false
+	# $MetaDataReportingOn		= Specify whether Metadata size comparison report should be on or not. Default is $false (NOTE:  This requires SQLServer or SQLPS Module to be imported for Invoke-SQLCMD to work)
 
-  # $MetaDataReportingOn	= Specify whether Metadata size comparison report should be on or not. Default is $false (NOTE:  This requires SQLServer or SQLPS Module to be imported for Invoke-SQLCMD to work)
+  
