@@ -215,7 +215,7 @@ Param(
 
 	[switch] $forcesync = $false,
 
-	[switch] $MetaDataReportingOn = $true,
+	[switch] $MetaDataReportingOn = $false,
 
 	[bool]$EmailReport = $true,
 	
